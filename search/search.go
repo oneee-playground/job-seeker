@@ -13,6 +13,9 @@ const (
 
 type Options struct {
 	Keywords []string
+	// Limit softly limits the maximum count of found job positions.
+	// If Limit < 0, there will be no limit.
+	Limit int
 }
 
 type Result struct {

@@ -32,9 +32,11 @@ func (p *Platform) Search(ctx context.Context, opts search.Options) (<-chan sear
 		defer close(errchan)
 		defer close(results)
 
+		found := 0
+
 		nextURI := "/api/chaos/navigation/v1/results?job_group_id=518&country=kr&job_sort=job.latest_order&years=-1&locations=all&limit=30"
 
-		for nextURI != "" {
+		for nextURI != "" && (opts.Limit < 0 || found < opts.Limit) {
 			list, err := p.fetchJobList(baseURL + nextURI)
 			if err != nil {
 				errchan <- err
@@ -56,6 +58,7 @@ func (p *Platform) Search(ctx context.Context, opts search.Options) (<-chan sear
 						Position: detail.Job.Detail.Position,
 						URL:      makeJobDetailFrontendURL(job.ID),
 					}
+					found++
 				}
 			}
 

@@ -13,6 +13,7 @@ func main() {
 
 	if err := search.Search(context.Background(), wanted, search.Options{
 		Keywords: []string{"Go", "Golang"},
+		Limit:    20,
 	}); err != nil {
 		panic(err)
 	}
