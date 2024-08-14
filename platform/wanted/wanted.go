@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -34,7 +35,17 @@ func (p *Platform) Search(ctx context.Context, opts search.Options) (<-chan sear
 
 		found := 0
 
-		nextURI := "/api/chaos/navigation/v1/results?job_group_id=518&country=kr&job_sort=job.latest_order&years=-1&locations=all&limit=30"
+		const uriBase = "/api/chaos/navigation/v1/results?job_group_id=518&country=kr&job_sort=job.latest_order&locations=all&limit=30"
+
+		u, _ := url.Parse(uriBase)
+		query := u.Query()
+
+		query.Add("years", strconv.Itoa(opts.ExpYears.Start()))
+		query.Add("years", strconv.Itoa(opts.ExpYears.End()))
+
+		u.RawQuery = query.Encode()
+
+		nextURI := u.String()
 
 		for nextURI != "" && (opts.Limit < 0 || found < opts.Limit) {
 			list, err := p.fetchJobList(baseURL + nextURI)
@@ -55,6 +66,7 @@ func (p *Platform) Search(ctx context.Context, opts search.Options) (<-chan sear
 				if ok := filterJob(detail.Job, opts); ok {
 					results <- search.Result{
 						Platform: search.PlatformWanted,
+						Company:  detail.Job.Company.Name,
 						Position: detail.Job.Detail.Position,
 						URL:      makeJobDetailFrontendURL(job.ID),
 					}
