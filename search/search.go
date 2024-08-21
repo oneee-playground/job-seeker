@@ -24,6 +24,7 @@ type Result struct {
 	Platform JobPlatform
 	Company  string
 	Position string
+	ExpYears ExpYears
 	URL      string
 }
 

@@ -68,6 +68,7 @@ func (p *Platform) Search(ctx context.Context, opts search.Options) (<-chan sear
 						Platform: search.PlatformWanted,
 						Company:  detail.Job.Company.Name,
 						Position: detail.Job.Detail.Position,
+						ExpYears: search.ExpYears{detail.Job.AnnualFrom, detail.Job.AnnualTo},
 						URL:      makeJobDetailFrontendURL(job.ID),
 					}
 					found++
