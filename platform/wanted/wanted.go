@@ -64,11 +64,17 @@ func (p *Platform) Search(ctx context.Context, opts search.Options) (<-chan sear
 				}
 
 				if ok := filterJob(detail.Job, opts); ok {
+					expYears := search.ExpYears{detail.Job.AnnualFrom, detail.Job.AnnualTo}
+					if expYears.End() == 100 {
+						// expYears limit of wanted is 100. meaning it has no end limit.
+						expYears.SetNoEndLimit()
+					}
+
 					results <- search.Result{
 						Platform: search.PlatformWanted,
 						Company:  detail.Job.Company.Name,
 						Position: detail.Job.Detail.Position,
-						ExpYears: search.ExpYears{detail.Job.AnnualFrom, detail.Job.AnnualTo},
+						ExpYears: expYears,
 						URL:      makeJobDetailFrontendURL(job.ID),
 					}
 					found++
