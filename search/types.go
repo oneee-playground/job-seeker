@@ -33,6 +33,10 @@ func (e ExpYears) String() string {
 		return from + " 이상"
 	}
 
+	if e.Start() == e.End() {
+		return from
+	}
+
 	to := strconv.Itoa(e.End()) + "년"
 
 	return from + "~" + to
